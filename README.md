@@ -48,3 +48,7 @@ MySTEAMID64=Pineapple.png
 ```
 
 Now boot up the game and have fun!
+
+## Example of a custom flag applied to a hoy and galleon
+
+![example NL](/Images/NL_Flag.png)
