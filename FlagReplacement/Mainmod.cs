@@ -125,7 +125,7 @@ namespace FlagReplacement
                 float startTime = Time.time;
                 while (1 != 2)
                 {
-                    if (startTime <= Time.time - 4)
+                    if (startTime <= Time.time - 2)
                     {
                         if (GameMode.Instance.teamCaptains[teamNum].steamID != 0)
                         {
@@ -147,9 +147,7 @@ namespace FlagReplacement
                                     }
                                     catch (Exception e)
                                     {
-                                        debugLog("ERROR IN LOOP");
-                                        debugLog(e.Message);
-                                        debugLog("ERROR IN LOOP");
+                                        // Just ignore
                                     }
                                 }
                                 break;
