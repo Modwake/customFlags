@@ -15,7 +15,7 @@ namespace FlagReplacement
     {
         public static string texturesFilePath = "/Managed/Mods/Assets/FlagReplacement/";
 
-        static Texture2D customFlag;
+        static Dictionary<string, Texture2D> flags = new Dictionary<string, Texture2D>();
 
         public static Mainmod Instance;
         static string userSteamID;
@@ -38,7 +38,6 @@ namespace FlagReplacement
             HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
             harmony.PatchAll();
             initFiles();
-            customFlag = loadTexture("customFlag");
         }
 
         void initFiles()
@@ -47,16 +46,23 @@ namespace FlagReplacement
             {
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath);
                 StreamWriter streamWriter = new StreamWriter(Application.dataPath + texturesFilePath + "steamID.txt");
-                streamWriter.WriteLine("STEAMID64HERE");
+                streamWriter.WriteLine("STEAMID64HERE=FLAGNAMEHERE");
                 streamWriter.Close();
             }
 
-            getSteamID();
+            initFlags();
         }
 
-        void getSteamID()
+        void initFlags()
         {
-            userSteamID = File.ReadAllText(Application.dataPath + texturesFilePath + "steamID.txt");
+            Texture2D flag;
+            string[] array = File.ReadAllLines(Application.dataPath + texturesFilePath + "steamID.txt");
+            for (int i = 0; i <= array.Length; i++)
+            {
+                string[] contents = array[i].Split('=');
+                flag = loadTexture(contents[1]);
+                flags.Add(contents[0], flag);
+            }
         }
 
         static void debugLog(string message)
@@ -73,6 +79,7 @@ namespace FlagReplacement
                 byte[] data = File.ReadAllBytes(Application.dataPath + texturesFilePath + texName + ".png");
                 Texture2D tex = new Texture2D(1024, 512, TextureFormat.RGB24, false);
                 tex.LoadImage(data);
+                tex.name = "validFlag";
                 return tex;
             }
             catch (Exception e)
@@ -123,7 +130,7 @@ namespace FlagReplacement
                         if (GameMode.Instance.teamCaptains[teamNum].steamID != 0)
                         {
                             string steamID = GameMode.Instance.teamCaptains[teamNum].steamID.ToString();
-                            if (steamID == userSteamID)
+                            if (flags.TryGetValue(steamID, out Texture2D flag))
                             {
                                 foreach (Renderer renderer in renderers)
                                 {
@@ -131,12 +138,14 @@ namespace FlagReplacement
                                     {
                                         if (renderer.name == "teamflag")
                                         {
-                                            if (customFlag.name != "NOFLAG")
+                                            debugLog($"Faction flag: -{renderer.material.mainTexture.name}-");
+                                            if (flag.name != "NOFLAG")
                                             {
-                                                renderer.material.mainTexture = customFlag;
+                                                renderer.material.mainTexture = flag;
                                             }
                                         }
-                                    }catch (Exception e)
+                                    }
+                                    catch (Exception e)
                                     {
                                         debugLog("ERROR IN LOOP");
                                         debugLog(e.Message);
