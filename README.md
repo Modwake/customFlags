@@ -1,4 +1,4 @@
-Custom mod that lets you load your own flag for your own ship.Required files are listed inside the release
+Custom mod that lets you load your own flag for your own ship. Required files are listed inside the release
 
 ## File setup
 
