@@ -15,4 +15,4 @@ Should look like this when you are done:
 
 ## Note
 
-Currently only supports single steamID.
+Currently only supports a single steamID.
