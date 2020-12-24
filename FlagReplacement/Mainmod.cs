@@ -18,6 +18,7 @@ namespace FlagReplacement
         static Texture2D customFlag;
 
         public static Mainmod Instance;
+        static string userSteamID;
 
         void Awake()
         {
@@ -36,7 +37,26 @@ namespace FlagReplacement
             //Setup harmony patching
             HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
             harmony.PatchAll();
+            initFiles();
             customFlag = loadTexture("customFlag");
+        }
+
+        void initFiles()
+        {
+            if (!File.Exists(Application.dataPath + texturesFilePath + "steamID.txt"))
+            {
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath);
+                StreamWriter streamWriter = new StreamWriter(Application.dataPath + texturesFilePath + "steamID.txt");
+                streamWriter.WriteLine("STEAMID64HERE");
+                streamWriter.Close();
+            }
+
+            getSteamID();
+        }
+
+        void getSteamID()
+        {
+            userSteamID = File.ReadAllText(Application.dataPath + texturesFilePath + "steamID.txt");
         }
 
         static void debugLog(string message)
@@ -59,8 +79,10 @@ namespace FlagReplacement
             {
                 debugLog(string.Format("Error loading texture {0}", texName));
                 debugLog(e.Message);
+                Texture2D tex = Texture2D.whiteTexture;
+                tex.name = "NOFLAG";
                 // Return default white texture on failing to load
-                return Texture2D.whiteTexture;
+                return tex;
             }
         }
    
@@ -101,7 +123,7 @@ namespace FlagReplacement
                         if (GameMode.Instance.teamCaptains[teamNum].steamID != 0)
                         {
                             string steamID = GameMode.Instance.teamCaptains[teamNum].steamID.ToString();
-                            if (steamID == "76561198138287816")
+                            if (steamID == userSteamID)
                             {
                                 foreach (Renderer renderer in renderers)
                                 {
@@ -109,7 +131,10 @@ namespace FlagReplacement
                                     {
                                         if (renderer.name == "teamflag")
                                         {
-                                            renderer.material.mainTexture = customFlag;
+                                            if (customFlag.name != "NOFLAG")
+                                            {
+                                                renderer.material.mainTexture = customFlag;
+                                            }
                                         }
                                     }catch (Exception e)
                                     {
