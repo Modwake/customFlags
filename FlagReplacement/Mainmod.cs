@@ -18,7 +18,6 @@ namespace FlagReplacement
         static Dictionary<string, Texture2D> flags = new Dictionary<string, Texture2D>();
 
         public static Mainmod Instance;
-        static string userSteamID;
 
         void Awake()
         {
