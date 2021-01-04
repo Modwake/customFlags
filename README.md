@@ -21,12 +21,12 @@ From there, simply place the desired flag(s) inside `/FlagReplacement/`. For exa
 - AUS.png
 - Pineapple.png
 
-Inside your `steamID.txt` file you would simply place the following below:
+Inside your `steamID.txt` file you would simply place any steamID's and flags using the following template below:
 
 ```TEXT
-1stSTEAMID64=portFlag.png
-MySTEAMID64=Pineapple.png
-123456789123=AUS.png
+STEAMID64=portFlag
+STEAMID64=Pineapple
+123456789123=AUS
 ```
 
 Now boot up the game and have fun!
@@ -43,12 +43,12 @@ From there, after you have closed the game, simply place the desired flag inside
 - AUS.png
 - Pineapple.png
 
-Inside your `steamID.txt` file you would simply place the following below:
+Inside your `steamID.txt` file you would simply place any steamID's and flags using the following template below:
 
 ```TEXT
-1stSTEAMID64=portFlag.png
-MySTEAMID64=Pineapple.png
-123456789123=AUS.png
+STEAMID64=portFlag
+STEAMID64=Pineapple
+123456789123=AUS
 ```
 
 Now boot up the game and have fun!
