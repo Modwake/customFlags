@@ -1,4 +1,8 @@
-Custom mod that lets you load your own flag for your own ship.
+Custom mod that lets you load your own flag for your own ship. Required files are listed inside the release
+
+## File setup
+
+See notes on the latest release.
 
 ## Initial Setup
 
@@ -17,12 +21,12 @@ From there, simply place the desired flag(s) inside `Mods/Assets/FlagReplacement
 - AUS.png
 - Pineapple.png
 
-Inside your `customFlags.cfg` file you would simply place the following below:
+Inside your `customFlags.cfg` file you would simply place any steamID's and flags using the following template below:
 
 ```TEXT
-1stSTEAMID64=portFlag.png
-MySTEAMID64=Pineapple.png
-123456789123=AUS.png
+STEAMID64=portFlag
+STEAMID64=Pineapple
+123456789123=AUS
 ```
 
 Now boot up the game and have fun!
@@ -39,12 +43,12 @@ From there, after you have closed the game, simply place the desired flag inside
 - AUS.png
 - Pineapple.png
 
-Inside your `customFlags.cfg` file you would simply place the following below:
+Inside your `customFlags.cfg` file you would simply place any steamID's and flags using the following template below:
 
 ```TEXT
-1stSTEAMID64=portFlag.png
-MySTEAMID64=Pineapple.png
-123456789123=AUS.png
+STEAMID64=portFlag
+STEAMID64=Pineapple
+123456789123=AUS
 ```
 
 Now boot up the game and have fun!
