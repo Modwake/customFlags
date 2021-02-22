@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine.UI;
 using System.Threading;
 using BWModLoader;
 using UnityEngine;
@@ -13,7 +12,9 @@ namespace FlagReplacement
     [Mod]
     public class Mainmod : MonoBehaviour
     {
-        public static string texturesFilePath = "/Managed/Mods/Assets/FlagReplacement/";
+        static string texturesFilePath = "/Managed/Mods/Assets/FlagReplacement/";
+
+        static string configFilePath = "/Managed/Mods/Configs/customFlags.cfg";
 
         static Dictionary<string, Texture2D> flags = new Dictionary<string, Texture2D>();
 
@@ -41,10 +42,10 @@ namespace FlagReplacement
 
         void initFiles()
         {
-            if (!File.Exists(Application.dataPath + texturesFilePath + "steamID.txt"))
+            if (!File.Exists(Application.dataPath + configFilePath))
             {
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath);
-                StreamWriter streamWriter = new StreamWriter(Application.dataPath + texturesFilePath + "steamID.txt");
+                Directory.CreateDirectory(Application.dataPath + "/Managed/Mods/Configs/");
+                StreamWriter streamWriter = new StreamWriter(Application.dataPath + configFilePath);
                 streamWriter.WriteLine("STEAMID64HERE=FLAGNAMEHERE");
                 streamWriter.Close();
             }
@@ -55,7 +56,7 @@ namespace FlagReplacement
         void initFlags()
         {
             Texture2D flag;
-            string[] array = File.ReadAllLines(Application.dataPath + texturesFilePath + "steamID.txt");
+            string[] array = File.ReadAllLines(Application.dataPath + configFilePath);
             for (int i = 0; i <= array.Length; i++)
             {
                 string[] contents = array[i].Split('=');
