@@ -18,6 +18,13 @@ namespace FlagReplacement
 
         static Dictionary<string, Texture2D> flags = new Dictionary<string, Texture2D>();
 
+        static Dictionary<int, bool> ships = new Dictionary<int, bool>();
+
+        static bool hasNotSetNavy = true;
+        static bool hasNotSetPirate = true;
+        static Texture navyFlag;
+        static Texture pirateFlag;
+
         public static Mainmod Instance;
 
         void Awake()
@@ -48,6 +55,11 @@ namespace FlagReplacement
                 StreamWriter streamWriter = new StreamWriter(Application.dataPath + configFilePath);
                 streamWriter.WriteLine("STEAMID64HERE=FLAGNAMEHERE");
                 streamWriter.Close();
+            }
+
+            if (!File.Exists(Application.dataPath + texturesFilePath))
+            {
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath);
             }
 
             initFlags();
@@ -108,62 +120,96 @@ namespace FlagReplacement
             }
         }
 
-        private IEnumerator doStuff(int team)
+        static void resetFlag(Renderer renderer, bool isNavy)
         {
-            Transform shipTransform = GameMode.Instance.teamParents[team];
-            Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true);
-
-            Thread childThread = new Thread(() => threadedFlags(renderers, team));
-            childThread.Start();
-            yield return null;
+            if (isNavy)
+            {
+                renderer.material.mainTexture = navyFlag;
+            }
+            else
+            {
+                renderer.material.mainTexture = pirateFlag;
+            }
         }
 
-        static void threadedFlags(Renderer[] renderers, int teamNum)
+        static void loopOver(Renderer[] renderers, Texture flag, int team)
         {
-            try
+            foreach (Renderer renderer in renderers)
             {
-                float startTime = Time.time;
-                while (1 != 2)
+                try
                 {
-                    if (startTime <= Time.time - 2)
+                    if (renderer.name == "teamflag")
                     {
-                        if (GameMode.Instance.teamCaptains[teamNum].steamID != 0)
+                        debugLog($"Faction flag: -{renderer.material.mainTexture.name}-");
+
+                        if (ships.TryGetValue(team, out bool isNavy))
                         {
-                            string steamID = GameMode.Instance.teamCaptains[teamNum].steamID.ToString();
-                            if (flags.TryGetValue(steamID, out Texture2D flag))
+                            if (flag != null && flag.name != "NOFLAG")
                             {
-                                foreach (Renderer renderer in renderers)
-                                {
-                                    try
-                                    {
-                                        if (renderer.name == "teamflag")
-                                        {
-                                            debugLog($"Faction flag: -{renderer.material.mainTexture.name}-");
-                                            if (flag.name != "NOFLAG")
-                                            {
-                                                renderer.material.mainTexture = flag;
-                                            }
-                                        }
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        // Just ignore
-                                    }
-                                }
-                                break;
+                                renderer.material.mainTexture = flag;
                             }
                             else
                             {
-                                break;
+                                resetFlag(renderer, isNavy);
                             }
                         }
+                        else
+                        {
+                            if (renderer.material.mainTexture.name == "flag_navy")
+                            {
+                                ships.Add(team, true);
+                                if (hasNotSetNavy)
+                                {
+                                    navyFlag = renderer.material.mainTexture;
+                                    hasNotSetNavy = false;
+                                }
+                            }
+                            else
+                            {
+                                ships.Add(team, false);
+                                if (hasNotSetPirate)
+                                {
+                                    pirateFlag = renderer.material.mainTexture;
+                                    hasNotSetPirate = false;
+                                }
+                            }
+
+                            if (flag != null && flag.name != "NOFLAG")
+                            {
+                                renderer.material.mainTexture = flag;
+                            }
+                            else
+                            {
+                                resetFlag(renderer, isNavy);
+                            }
+                        }
+                        
                     }
                 }
-            }catch (Exception e)
+                catch (Exception e)
+                {
+                    // Just ignore
+                }
+            }
+        }
+
+        private IEnumerator doStuff(int team)
+        {
+            yield return new WaitForSeconds(4f);
+
+            if (GameMode.Instance.teamCaptains[team].steamID != 0)
             {
-                debugLog("ERROR");
-                debugLog(e.Message);
-                debugLog("ERROR");
+                Transform shipTransform = GameMode.Instance.teamParents[team];
+                Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true);
+                string steamID = GameMode.Instance.teamCaptains[team].steamID.ToString();
+                if (flags.TryGetValue(steamID, out Texture2D flag))
+                {
+                    loopOver(renderers, flag, team);
+                }
+                else
+                {
+                    loopOver(renderers, null, team);
+                }
             }
         }
     }
